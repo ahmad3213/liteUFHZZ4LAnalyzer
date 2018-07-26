@@ -1,0 +1,9 @@
+<flags ADD_SUBDIR="1" />
+
+<use name="FWCore/ParameterSet"/>
+<use name="root"/>
+<use name="rootmath"/>
+
+<export>
+    <lib   name="1"/>
+</export>

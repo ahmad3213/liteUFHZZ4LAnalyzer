@@ -1,0 +1,54 @@
+From 7685faec4cf6f2ec2f7492a9a7e7cbb7aec9cf32 Mon Sep 17 00:00:00 2001
+From: David Sperka <dsperka@cern.ch>
+Date: Thu, 16 Feb 2017 15:29:26 -0500
+Subject: [PATCH] changes for crab
+
+---
+ MELA/src/Mela.cc      | 8 ++++++--
+ MELA/src/SuperMELA.cc | 4 +++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/MELA/src/Mela.cc b/MELA/src/Mela.cc
+index c9983d7..f20a1f2 100755
+--- a/MELA/src/Mela.cc
++++ b/MELA/src/Mela.cc
+@@ -64,7 +64,9 @@ Mela::Mela(
+   if (myVerbosity_>=TVar::DEBUG) cout << "Create symlinks to the required files if these are not already present:" << endl;
+ 
+ #ifdef _melapkgpathstr_
+-  const string MELAPKGPATH = _melapkgpathstr_;
++  //const string MELAPKGPATH = _melapkgpathstr_;
++  string MELAPKGPATH = std::getenv( "CMSSW_BASE" );
++  MELAPKGPATH+="/src/ZZMatrixElement/MELA/";
+   if (myVerbosity_>=TVar::DEBUG)  cout << "\t- MELA package path: " << MELAPKGPATH << endl;
+ #else
+   cout << "MELA package path is undefined! Please modify the makefle or the makefile-equivalent!" << endl;
+@@ -2000,7 +2002,9 @@ MelaPConstant* Mela::getPConstantHandle(
+ 
+   if (myVerbosity_>=TVar::DEBUG) cout << "Mela::getPConstantHandle: relpath and spline name: " << relpath << ", " << spname << endl;
+ #ifdef _melapkgpathstr_
+-  const string MELAPKGPATH = _melapkgpathstr_;
++  //const string MELAPKGPATH = _melapkgpathstr_;
++  string MELAPKGPATH = std::getenv( "CMSSW_BASE" );
++  MELAPKGPATH+="/src/ZZMatrixElement/MELA/";
+ #else
+   cout << "Mela::getPConstantHandle: MELA package path is undefined! Please modify the makefle or the makefile-equivalent!" << endl;
+   assert(0);
+diff --git a/MELA/src/SuperMELA.cc b/MELA/src/SuperMELA.cc
+index 6f5b6e6..3fe10ca 100755
+--- a/MELA/src/SuperMELA.cc
++++ b/MELA/src/SuperMELA.cc
+@@ -496,7 +496,9 @@ void SuperMELA::calc_mZZ_range(const double mHVal, double& low_M, double& high_M
+   //high_M=sqrts_*1000.;
+ 
+ #ifdef _melapkgpathstr_
+-  const string MELAPKGPATH = _melapkgpathstr_;
++  //const string MELAPKGPATH = _melapkgpathstr_;
++  string MELAPKGPATH = std::getenv( "CMSSW_BASE" );
++  MELAPKGPATH+="/src/ZZMatrixElement/MELA/";
+ #else
+   cout << "SuperMELA::calc_mZZ_range: MELA package path is undefined! Please modify the makefle or the makefile-equivalent!" << endl;
+   assert(0);
+-- 
+1.8.3.1
+

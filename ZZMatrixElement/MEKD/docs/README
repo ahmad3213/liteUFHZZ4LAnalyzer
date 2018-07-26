@@ -1,0 +1,204 @@
+
+ ===================================================================
+|                                                                   |
+|     Matrix Element (ME) Kinematic Discriminant (KD) producer      |
+|                                                                   |
+ ===================================================================
+
+=====================================================================
+I. Description of the code
+=====================================================================
+
+The Matrix Element (ME) Kinematic Discriminant (KD) package provides
+tools to calculate the leading order (LO) matrix elements for
+gg --> X --> ZZ* --> 4l signal and background processes, and to build
+kinematic discriminants KD that can be used for separation between
+these processes. The supported signal processes include the production
+of a scalar resonance X through gluon-gluon fusion and its decay into
+four leptons via two Z gauge bosons, where the couplings of the scalar
+resonance to gauge bosons are kept general (parametrized). 
+
+The ME KD package consists of two parts:
+MEKD interface class (and the corresponding MadGraph libraries)
+MEKD producer macro (defined in the runKD_MAD.cc)
+
+The MEKD class is declared in MEKD.h and provides interface to the
+methods to calculate the MEs and KDs for the chosen signal and
+background processes using the kinematic information about 4 leptons
+in the final state.
+
+The MEKD producer macro is executable that can run over an input
+sample of 4 lepton events and as the output produces a file with MEs
+and KDs for each of the input events. Its functionality is based on
+the MEKD interface class and represents a functional example how the
+class is used in practice.
+	
+---------------------------------------------------------------------
+
+The ME KD package provides the following functionalities:
+
+1) Accepts as input the tabulated data file with the kinematic
+   information of 4 leptons in the final state. The format of the
+   input file is the following:
+
+   id1 id2 id3 id4 p1x p1y p1z e1 p2x p2y p2z e2 p3x p3y p3z e3 p4x p4y p4z e4
+
+   where idN, pNx, pNy, pNz and eN are the PDG id, spatial components
+   and time component of the Nth lepton 4-momentum, respectively.
+
+---------------------------------------------------------------------
+2) Allows user to select the PDFs that should be taken into account
+   in ME calculation. At the moment only the CTEQ6L set of parton
+   distribution functions is provided.
+
+---------------------------------------------------------------------
+3) Initializes the couplings of the resonance according to the
+   user signal selection.
+
+---------------------------------------------------------------------
+4) Performs a purely transverse boost of each event to a reference
+   frame where the transverse component of total momenta of the
+   4-lepton system is zero.
+
+---------------------------------------------------------------------
+5) Feeds the boosted momenta of all 4 leptons to the ME calculator
+   and computes MEs and the KD for the given event.
+
+---------------------------------------------------------------------
+6) Provides the output as the tabulated data file with the computed
+   ME and KD values. The format of the output file is the following:
+
+   ME2_ZZ ME2_XZZ KD
+
+   where ME2_ZZ, ME2_XZZ and KD are the squared ME for the background
+   process, the squared ME for the selected signal process and the
+   kinematic discriminant KD, respectively.
+
+---------------------------------------------------------------------
+7) Prints out the status of the code execution and the summary message
+   at the completition.
+
+
+=====================================================================
+II. User instructions
+=====================================================================
+---------------------------------------------------------------------
+0. Requirements:
+
+   The latest version of the code can be downloaded and installed
+   following the instructions at the MEKD web site:
+
+        http://mekd.ihepa.ufl.edu
+
+   The same version of MEKD code can also be obtained from the CERN
+   CMSSW CVS repository (access reserved for CMS users) as:
+        
+        cvs co -d ZZMatrixElement/MEKD UserCode/UFL/ZZMatrixElement/MEKD
+
+   Compilation of the code requires installed GCC compiler. 
+   GCC binary multiple platform packages can be found here:
+
+        http://gcc.gnu.org
+
+---------------------------------------------------------------------
+1A. Setup of the MEKD code:
+
+    Unpack and install the package by typing in a terminal window:
+
+      tar xvf MEKD_Madgraph.tar
+      cd MEKD/macros
+      . setup.sh
+
+    The script will compile and link all necessary MEKD libraries and
+    the producer macro. One of the outputs is the executable runKD_MAD.
+    If ROOT in installed and environment properly set, the code
+    will be compiled with the ROOT support.
+
+---------------------------------------------------------------------
+1A. In order to run already compiled and linked code, user have to
+    add "<MEKD path>/lib" to its LIB PATH environment variable.
+    This can be done running the script:
+    
+      . setLocalLibrary.sh
+
+---------------------------------------------------------------------
+2. Run the MEKD producer:
+
+   In a terminal window, type:
+
+     ./runKD_MAD [-f input_file] [-t root_tree] [-s sqrts] [-x x_resonance] [-p pdf_include] [-l log_file]
+
+  where:
+     input_file    name of the input file (string, REQUIRED)                                    
+     root_tree     name of the input root tree (string, DEFAULT = 'passedEvents')               
+     sqrts         pp collsiion energy in TeV (double, DEFAULT = 8)                             
+                   Available options: 7, 8.                                                     
+     x_resonance   choice of the signal resonance (string, DEFAULT = 'SMHiggs')            
+                   Available options: 'SMHiggs', 'Higgs0M', 'Graviton2PM' and 'Custom'.                          
+     pdf_include   Name of PDFs, PDFs not used if pdf_include = '' (string, DEFAULT= 'CTEQ6L')  
+                   Available PDFs: 'CTEQ6L'.                                                    
+     log_file      name of the log file, no logging if log_file = '' (string, DEFAULT = '')     
+
+  For example, to run on the .dat file provided in the package:
+
+     ./runKD_MAD -f DATA/Events/SIG_4l_30evt.dat
+
+  User can define a resonance with custom couplings by specifying as
+  the type of resonance ”Custom” and by specifying manually the
+  desired couplings in the file:
+
+     src/Cards/param_card.dat
+
+  Examples of files with couplings parameters can be found in
+  template .dat files located in the same directory.
+
+  Options and details on input parameters can always be printed out
+  as:
+   
+     ./runKD_MAD -h.
+
+---------------------------------------------------------------------
+3. Output of running the ME KD producer
+
+   To run with a user provided input file yourInputFileName.dat, do:
+
+     ./runKD_MAD -f yourInputFileName.dat
+
+   and the output will be located in the file named:
+
+     yourInputFileName_withDiscriminator.dat
+
+   It includes the MEs for selected signal and background,
+   as well as the KD value.
+
+---------------------------------------------------------------------
+4. Comparison of user ME KD results:
+
+   The results of custom user code which uses the meMadgraph.h
+   libraries can be compared to the results obtained by the runKD_MAD
+   macro. The user code should be run on the input .dat files (SIG
+   and BKG) which contain 30 events located here:
+
+     DATA/Events
+
+   and the output files with results can be compared to the reference
+   output files of the runKD_MAD macro located in the same directory.
+
+---------------------------------------------------------------------
+5. The script AddKDRoot.py allows user to run several MEKD producer
+   as parallel threads (max 32) on input root files as:
+
+     python AddKDRoot.py [options] rootFilesDirectory
+
+   where available options are:
+     -d ROOTDIR, --dir=ROOTDIR
+                        The name of the directory with input root tree.
+     -t ROOTTREE, --tree=ROOTTREE
+                        The name of the input root tree.
+     -e ENERGY, --energy=ENERGY
+                        pp collsion energy in TeV.
+     -s SELECT, --select=SELECT
+                        Only files whose name contains this selection string will be processed.
+     -h, --help            show this help message and exit
+
+=====================================================================

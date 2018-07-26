@@ -1,0 +1,70 @@
+#ifndef EbECorrection_h
+#define EbECorrection_h
+
+
+TFile* f_corr_e_1 = new TFile("KinZfitter/DoubleLepton_m2eLUT_m2e_1.root","READ");
+TFile* f_corr_e_2 = new TFile("KinZfitter/DoubleLepton_m2eLUT_m2e_2.root","READ");
+TFile* f_corr_e_3 = new TFile("KinZfitter/DoubleLepton_m2eLUT_m2e_3.root","READ");
+TFile* f_corr_mu = new TFile("KinZfitter/DoubleLepton_m2muLUT_m2mu.root","READ");
+
+TH2F* el_corr_1 = (TH2F*)f_corr_e_1->Get("2e");
+TH2F* el_corr_2 = (TH2F*)f_corr_e_2->Get("2e");
+TH2F* el_corr_3 = (TH2F*)f_corr_e_3->Get("2e");
+
+TH2F* mu_corr = (TH2F*)f_corr_mu->Get("2mu");
+
+TAxis* x_elpTaxis_1 = el_corr_1->GetXaxis(); TAxis* y_eletaaxis_1 = el_corr_1->GetYaxis();
+double maxPtEl_1 = x_elpTaxis_1->GetXmax(); double minPtEl_1 = x_elpTaxis_1->GetXmin();
+
+TAxis* x_elpTaxis_2 = el_corr_2->GetXaxis(); TAxis* y_eletaaxis_2 = el_corr_2->GetYaxis();
+double maxPtEl_2 = x_elpTaxis_2->GetXmax(); double minPtEl_2 = x_elpTaxis_2->GetXmin();
+
+TAxis* x_elpTaxis_3 = el_corr_3->GetXaxis(); TAxis* y_eletaaxis_3 = el_corr_3->GetYaxis();
+double maxPtEl_3 = x_elpTaxis_3->GetXmax(); double minPtEl_3 = x_elpTaxis_3->GetXmin();
+
+TAxis* x_mupTaxis = mu_corr->GetXaxis(); TAxis* y_muetaaxis = mu_corr->GetYaxis();
+double maxPtMu = x_mupTaxis->GetXmax(); double minPtMu = x_mupTaxis->GetXmin();
+
+TAxis* x_elpTaxis_mc = el_corr_mc->GetXaxis(); TAxis* y_eletaaxis_mc = el_corr_mc->GetYaxis();
+double maxPtEl_mc = x_elpTaxis_mc->GetXmax(); double minPtEl_mc = x_elpTaxis_mc->GetXmin();
+TAxis* x_mupTaxis_mc = mu_corr_mc->GetXaxis(); TAxis* y_muetaaxis_mc = mu_corr_mc->GetYaxis();
+double maxPtMu_mc = x_mupTaxis_mc->GetXmax(); double minPtMu_mc = x_mupTaxis_mc->GetXmin();
+
+TAxis* x_elpTaxis_data = el_corr_data->GetXaxis(); TAxis* y_eletaaxis_data = el_corr_data->GetYaxis();
+double maxPtEl_data = x_elpTaxis_data->GetXmax(); double minPtEl_data = x_elpTaxis_data->GetXmin();
+TAxis* x_mupTaxis_data = mu_corr_data->GetXaxis(); TAxis* y_muetaaxis_data = mu_corr_data->GetYaxis();
+double maxPtMu_data = x_mupTaxis_data->GetXmax(); double minPtMu_data = x_mupTaxis_data->GetXmin();
+
+float EbeCorrection(float absID, float pt, float abseta, bool isData) {
+
+    float corr=1.0;
+    if (!isData) {
+        if (absID==13) {
+            int xbin = x_mupTaxis_mc->FindBin(pt);
+            int ybin = y_muetaaxis_mc->FindBin(abseta);
+            if(pt>minPtMu_mc && pt<maxPtMu_mc && abseta<2.4) corr = mu_corr_mc->GetBinContent(xbin,ybin);
+        }
+        if (absID==11) {
+            int xbin = x_elpTaxis_mc->FindBin(pt);
+            int ybin = y_eletaaxis_mc->FindBin(abseta);
+            if(pt>minPtEl_mc && pt<maxPtEl_mc && abseta<2.5 ) corr = el_corr_mc->GetBinContent(xbin,ybin);
+        } 
+    } else {
+        if (absID==13) {
+            int xbin = x_mupTaxis_data->FindBin(pt);
+            int ybin = y_muetaaxis_data->FindBin(abseta);
+            if(pt>minPtMu_data && pt<maxPtMu_data && abseta<2.4) corr = mu_corr_data->GetBinContent(xbin,ybin);
+        }
+        if (absID==11) {
+            int xbin = x_elpTaxis_data->FindBin(pt);
+            int ybin = y_eletaaxis_data->FindBin(abseta);
+            if(pt>minPtEl_data && pt<maxPtEl_data && abseta<2.5 ) corr = el_corr_data->GetBinContent(xbin,ybin);
+        }
+    }
+
+    //cout<<"absID: "<<" pt: "<<pt<<" abseta: "<<abseta<<" corr: "<<corr;
+    return corr;
+    
+}
+
+#endif

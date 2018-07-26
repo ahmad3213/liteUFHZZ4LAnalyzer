@@ -1,0 +1,9 @@
+<use name="boost"/>
+<use name="rootcore"/>
+<use name="roofitcore"/>
+<use name="FWCore/PythonParameterSet"/>
+<use name="ZZMatrixElement/MEMCalculators"/>
+<use name="root"/>
+<export>
+  <lib   name="1"/>
+</export>
