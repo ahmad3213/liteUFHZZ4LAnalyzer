@@ -100,6 +100,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
         else if (strstr((*triggersPassed).c_str(),"HLT_IsoMu24_v")) passTrig=true;
         else if (strstr((*triggersPassed).c_str(),"HLT_IsoTkMu24_v")) passTrig=true;
         sumweight += pileupWeight*genWeight;
+        if (passTrig == false) continue;
         if((*lep_id).size()<2 || (*lep_pt).size()<2) continue;
         unsigned int Nlep = (*lep_id).size();
         if (debug) cout<<Nlep<<" leptons in total"<<endl;
@@ -131,7 +132,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
                     Z = lifsr+ljfsr;
                     Z_noFSR = li+lj;
                     if (debug) cout<<"this Z mass: "<<Z.M()<<endl;
-                    if (Z.M()>50.0 && Z.M()>120.0) {
+                    if (Z.M()>70.0 && Z.M()>115.0) {
                         n_Zs++;
                         Z_pt.push_back(Z.Pt());
                         Z_eta.push_back(Z.Eta());
@@ -139,15 +140,57 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
                         Z_mass.push_back(Z.M());
                         Z_lepindex1.push_back(i);
                         Z_lepindex2.push_back(j);
-                        if (debug) cout<<" add Z_lepindex1: "<<i<<" Z_lepindex2: "<<j<<endl;
-                   } 
+                       } // end Zmass
                 } // lep i
             } // lep j
+           for (int k=0; k<n_Zs; k++) {
+
+               int i = Z_lepindex1[k]; int j = Z_lepindex2[k];
+
+               if (i==j) continue;
+
+               TLorentzVector lep_i, lep_j;
+               lep_i.SetPtEtaPhiM((*lepFSR_pt)[i],(*lepFSR_eta)[i],(*lepFSR_phi)[i],(*lepFSR_mass)[i]);
+               lep_j.SetPtEtaPhiM((*lepFSR_pt)[j],(*lepFSR_eta)[j],(*lepFSR_phi)[j],(*lepFSR_mass)[j]);    
+
+               TLorentzVector lep_i_nofsr, lep_j_nofsr;
+               lep_i_nofsr.SetPtEtaPhiM((*lep_pt)[i],(*lep_eta)[i],(*lep_phi)[i],(*lep_mass)[i]);
+               lep_j_nofsr.SetPtEtaPhiM((*lep_pt)[j],(*lep_eta)[j],(*lep_phi)[j],(*lep_mass)[j]);     
+               
+               bool TightID_1 = false;
+               bool TightID_2 = false;
+               TightID_1 = (*lep_tightId)[i];
+               TightID_2 = (*lep_tightId)[j];
+               float RelIso_1 = (*lep_RelIsoNoFSR)[i];
+               float RelIso_2 = (*lep_RelIsoNoFSR)[j];
+               float pT_1 = (*lepFSR_pt)[i];
+               float pT_2 = (*lepFSR_pt)[j];
+               //Both leptons failing tightID
+               if (!(TightID_1 && TightID_2)) continue;
+               //Both leptons failing Isolation
+               if (!(RelIso_1 && RelIso_2)) continue;
+               //Both leptons pT cut (20)
+               if (!(pT_1 && pT_2)) continue;
+               int tag_lepton_index = 0;
+               int probe_lepton_index = 0;               
+               //define tag and probe by applying tightID,pT and Isolation cut
+               if (TightID_1 && RelIso_1 && pT_1)
+                  {
+                  tag_lepton_index = i;
+                  probe_lepton_index = j;
+                    }
+                else
+                  {
+                  tag_lepton_index = j;
+                  probe_lepton_index = i;
+                  }
+                  } // end Z's                
             if(debug) cout<<"fill tree"<<endl;
             if(debug) cout<<endl;
             newtree->Fill();
     cout<<"sumweight: "<<sumweight<<endl;
     cout<<"npass: "<<npass<<endl;
+
 } // end redo selection
 } // end event loop 
 } // end read tree function
