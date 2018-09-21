@@ -83,7 +83,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
     if (job>0) {
         firstevt = tree->GetEntries()*(job-1)/njobs;
         lastevt = tree->GetEntries()*(job)/njobs-1;
-    }
+            }
     for(int evt=0; evt < tree->GetEntries(); evt++) { //event loop
         if (evt<firstevt) continue;
         if (evt>lastevt) continue;
@@ -132,7 +132,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
                     Z = lifsr+ljfsr;
                     Z_noFSR = li+lj;
                     if (debug) cout<<"this Z mass: "<<Z.M()<<endl;
-                    if (Z.M()>70.0 && Z.M()>115.0) {
+                    if (Z.M()>40.0 && Z.M()>150.0) {
                         n_Zs++;
                         Z_pt.push_back(Z.Pt());
                         Z_eta.push_back(Z.Eta());
@@ -174,16 +174,63 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
                int tag_lepton_index = 0;
                int probe_lepton_index = 0;               
                //define tag and probe by applying tightID,pT and Isolation cut
+               // defined new varibale as Tag and proble consistent 
+		int TnP_l1_pdgId; //[nTnP]
+		float TnP_l1_pt; //[nTnP]
+		float TnP_l1_eta; //[nTnP]
+		float TnP_l1_phi; //[nTnP]
+		float TnP_l1_mass; //[nTnP]
+		int TnP_l1_charge; //[nTnP]
+		int TnP_l1_tightId; //[nTnP]
+		int TnP_l1_looseId; //[nTnP]
+		float TnP_l1_dxy; //[nTnP]
+		float TnP_l1_dz; //[nTnP]
+		float TnP_l1_edxy; //[nTnP]
+		float TnP_l1_edz; //[nTnP]
+		float TnP_l1_ip3d; //[nTnP]
+		float TnP_l1_sip3d; //[nTnP]
+		float TnP_l1_ptErr; //[nTnP]
+		int TnP_l1_lostHits; //[nTnP]
+		int TnP_l1_trackerLayers; //[nTnP]
+		int TnP_l1_pixelLayers; //[nTnP]
+		float TnP_l1_etaSc; //[nTnP]
+		int TnP_l1_isGap; //[nTnP]
+		float TnP_l1_r9; //[nTnP]
+		int TnP_l1_convVeto; //[nTnP]
+		float TnP_l1_mvaIdSpring15; //[nTnP]
+		float TnP_l1_relIsoAfterFSR; //[nTnP]
+		float TnP_l1_chargedHadIso03; //[nTnP]
+		int TnP_l1_hasOwnFSR; //[nTnP]
+		int TnP_l1_hlt1L; //[nTnP]
+		float TnP_l1_p4WithFSR_pt; //[nTnP]
+		float TnP_l1_p4WithFSR_eta; //[nTnP]
+		float TnP_l1_p4WithFSR_phi; //[nTnP]
+		float TnP_l1_p4WithFSR_mass; //[nTnP] 
                if (TightID_1 && RelIso_1 && pT_1)
                   {
                   tag_lepton_index = i;
                   probe_lepton_index = j;
+                  TnP_l1_pdgId = (*lep_id)[i];
+                  TnP_l1_pt = (*lepFSR_pt)[i];
+                  TnP_l1_eta = (*lepFSR_eta)[i];
+                  TnP_l1_phi = (*lepFSR_phi)[i];
+                  TnP_l1_mass = (*lepFSR_mass)[i];
+                  TnP_l1_tightId = (*lep_tightId)[i];
                     }
                 else
                   {
                   tag_lepton_index = j;
                   probe_lepton_index = i;
+                  TnP_l1_pdgId = (*lep_id)[j];
+                  TnP_l1_pt = (*lepFSR_pt)[j];  
+                  TnP_l1_eta = (*lepFSR_eta)[j];
+                  TnP_l1_phi = (*lepFSR_phi)[j];
+                  TnP_l1_mass = (*lepFSR_mass)[j];
+                  TnP_l1_tightId = (*lep_tightId)[j];
+                  
                   }
+                  //Fill Tag related variables
+                 int TnP_l1_pdgId = (*lep_id)[i]
                   } // end Z's                
             if(debug) cout<<"fill tree"<<endl;
             if(debug) cout<<endl;
