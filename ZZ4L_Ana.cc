@@ -106,7 +106,7 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
         if (debug) cout<<Nlep<<" leptons in total"<<endl;
         if (redoEventSelection) {
         // First, make all Z candidates including any FSR photons
-        const double Zmass = 91.1876;
+       // const double Zmass = 91.1876;
         int n_Zs=0;
         vector<int> Z_lepindex1;
         vector<int> Z_lepindex2;
@@ -169,68 +169,48 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
                if (!(TightID_1 && TightID_2)) continue;
                //Both leptons failing Isolation
                if (!(RelIso_1 && RelIso_2)) continue;
-               //Both leptons pT cut (20)
-               if (!(pT_1 && pT_2)) continue;
-               int tag_lepton_index = 0;
-               int probe_lepton_index = 0;               
+               //atleat one lepton pT cut (20)
+               if (!(pT_1 || pT_2)) continue; // fix me
                //define tag and probe by applying tightID,pT and Isolation cut
                // defined new varibale as Tag and proble consistent 
-		int TnP_l1_pdgId; //[nTnP]
-		float TnP_l1_pt; //[nTnP]
-		float TnP_l1_eta; //[nTnP]
-		float TnP_l1_phi; //[nTnP]
-		float TnP_l1_mass; //[nTnP]
-		int TnP_l1_charge; //[nTnP]
-		int TnP_l1_tightId; //[nTnP]
-		int TnP_l1_looseId; //[nTnP]
-		float TnP_l1_dxy; //[nTnP]
-		float TnP_l1_dz; //[nTnP]
-		float TnP_l1_edxy; //[nTnP]
-		float TnP_l1_edz; //[nTnP]
-		float TnP_l1_ip3d; //[nTnP]
-		float TnP_l1_sip3d; //[nTnP]
-		float TnP_l1_ptErr; //[nTnP]
-		int TnP_l1_lostHits; //[nTnP]
-		int TnP_l1_trackerLayers; //[nTnP]
-		int TnP_l1_pixelLayers; //[nTnP]
-		float TnP_l1_etaSc; //[nTnP]
-		int TnP_l1_isGap; //[nTnP]
-		float TnP_l1_r9; //[nTnP]
-		int TnP_l1_convVeto; //[nTnP]
-		float TnP_l1_mvaIdSpring15; //[nTnP]
-		float TnP_l1_relIsoAfterFSR; //[nTnP]
-		float TnP_l1_chargedHadIso03; //[nTnP]
-		int TnP_l1_hasOwnFSR; //[nTnP]
-		int TnP_l1_hlt1L; //[nTnP]
-		float TnP_l1_p4WithFSR_pt; //[nTnP]
-		float TnP_l1_p4WithFSR_eta; //[nTnP]
-		float TnP_l1_p4WithFSR_phi; //[nTnP]
-		float TnP_l1_p4WithFSR_mass; //[nTnP] 
+               TnP_l1_looseId = 1; // all leptons coming this script has already passed looseId 
                if (TightID_1 && RelIso_1 && pT_1)
                   {
-                  tag_lepton_index = i;
-                  probe_lepton_index = j;
                   TnP_l1_pdgId = (*lep_id)[i];
-                  TnP_l1_pt = (*lepFSR_pt)[i];
-                  TnP_l1_eta = (*lepFSR_eta)[i];
-                  TnP_l1_phi = (*lepFSR_phi)[i];
-                  TnP_l1_mass = (*lepFSR_mass)[i];
+                  TnP_l1_pt = (*lep_pt)[i];
+                  TnP_l1_eta = (*lep_eta)[i];
+                  TnP_l1_phi = (*lep_phi)[i];
+                  TnP_l1_mass = (*lep_mass)[i];
                   TnP_l1_tightId = (*lep_tightId)[i];
+                  TnP_l1_sip3d = (*lep_Sip)[i];
+                  TnP_l1_p4WithFSR_pt = (*lepFSR_pt)[i];
+                  TnP_l1_p4WithFSR_eta = (*lepFSR_eta)[i];    
+                  TnP_l1_p4WithFSR_phi = (*lepFSR_phi)[i];     
+                  TnP_l1_p4WithFSR_mass = (*lepFSR_mass)[i];        
+                  TnP_l1_relIsoAfterFSR = (*lep_RelIsoNoFSR)[i]; // attached FSR are removed from isolation cone computation
+                  TnP_l1_relIsobeforeFSR = (*lep_RelIso)[i];     // No FSR recovery
+                  TnP_l1_chargedHadIso03 = (*lep_isoCH)[i]; 
+                  
                     }
                 else
                   {
-                  tag_lepton_index = j;
-                  probe_lepton_index = i;
                   TnP_l1_pdgId = (*lep_id)[j];
-                  TnP_l1_pt = (*lepFSR_pt)[j];  
-                  TnP_l1_eta = (*lepFSR_eta)[j];
-                  TnP_l1_phi = (*lepFSR_phi)[j];
-                  TnP_l1_mass = (*lepFSR_mass)[j];
+                  TnP_l1_pt = (*lep_pt)[j];  
+                  TnP_l1_eta = (*lep_eta)[j];
+                  TnP_l1_phi = (*lep_phi)[j];
+                  TnP_l1_mass = (*lep_mass)[j];
                   TnP_l1_tightId = (*lep_tightId)[j];
+                  TnP_l1_sip3d = (*lep_Sip)[j];
+                  TnP_l1_p4WithFSR_pt = (*lepFSR_pt)[j];
+                  TnP_l1_p4WithFSR_eta = (*lepFSR_eta)[j];
+                  TnP_l1_p4WithFSR_phi = (*lepFSR_phi)[j];
+                  TnP_l1_p4WithFSR_mass = (*lepFSR_mass)[j];
+                  TnP_l1_relIsoAfterFSR = (*lep_RelIsoNoFSR)[j];   // attached FSR are removed from isolation cone computation                
+                  TnP_l1_relIsobeforeFSR = (*lep_RelIso)[j];     // No FSR recovery
+                  TnP_l1_chargedHadIso03 = (*lep_isoCH)[j];
                   
                   }
                   //Fill Tag related variables
-                 int TnP_l1_pdgId = (*lep_id)[i]
                   } // end Z's                
             if(debug) cout<<"fill tree"<<endl;
             if(debug) cout<<endl;
@@ -242,9 +222,23 @@ void ReadTree(TTree* tree, TTree* & newtree, TString filename)
 } // end event loop 
 } // end read tree function
 void SetNewTree(TTree* newtree){
-
     newtree->Branch("Run",&Run,"Run/l");
     newtree->Branch("Event",&Event,"Event/l");
     newtree->Branch("LumiSect",&LumiSect,"LumiSect/l");
+    newtree->Branch("TnP_l1_pdgId",&TnP_l1_pdgId,"TnP_l1_pdgId/I");
+    newtree->Branch("TnP_l1_pt",&TnP_l1_pt,"TnP_l1_pt/F");
+    newtree->Branch("TnP_l1_eta",&TnP_l1_eta,"TnP_l1_eta/F");
+    newtree->Branch("TnP_l1_phi",&TnP_l1_phi,"TnP_l1_phi/F");
+    newtree->Branch("TnP_l1_mass",&TnP_l1_mass,"TnP_l1_mass/F");
+    newtree->Branch("TnP_l1_tightId",&TnP_l1_tightId,"TnP_l1_tightId/I");
+    newtree->Branch("TnP_l1_sip3d",&TnP_l1_sip3d,"TnP_l1_sip3d/F");
+    newtree->Branch("TnP_l1_p4WithFSR_pt",&TnP_l1_p4WithFSR_pt,"TnP_l1_p4WithFSR_pt/F");
+    newtree->Branch("TnP_l1_p4WithFSR_eta",&TnP_l1_p4WithFSR_eta,"TnP_l1_p4WithFSR_eta/F");
+    newtree->Branch("TnP_l1_p4WithFSR_phi",&TnP_l1_p4WithFSR_phi,"TnP_l1_p4WithFSR_phi/F");
+    newtree->Branch("TnP_l1_p4WithFSR_mass",&TnP_l1_p4WithFSR_mass,"TnP_l1_p4WithFSR_mass/F");
+    newtree->Branch("TnP_l1_looseId",&TnP_l1_looseId,"TnP_l1_looseId/I");   
+    newtree->Branch("TnP_l1_relIsoAfterFSR",&TnP_l1_relIsoAfterFSR,"TnP_l1_relIsoAfterFSR/F");
+    newtree->Branch("TnP_l1_relIsobeforeFSR",&TnP_l1_relIsobeforeFSR,"TnP_l1_relIsobeforeFSR/F");
+    newtree->Branch("TnP_l1_chargedHadIso03",&TnP_l1_chargedHadIso03,"TnP_l1_chargedHadIso03/F");
 }
 

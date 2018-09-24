@@ -59,62 +59,33 @@ using namespace std;
 
 ////
 // output tree
-//float me_qqZZ_MCFM;  
 bool passedFullSelection, passedZ4lSelection;
 bool passedZXCRSelection, passedZ4lZXCRSelection;
 bool passSmartCut;
 int nZXCRFailedLeptons;
 int finalState;
-//
-bool passed_4l_reco,passed_properLep_ID,passed_LepTightID_Z1,passed_Lep_Leading_subleading;
-bool passed_Lep_overlaping, passed_QCD_cut, passed_smartcut, passed_LepIso_Z2, passed_LepTightID_Z2;
-bool passed_mZ1_mZ2,passed_Lep_OSSF; 
-bool passed_LepIso_Z1;
-int Event_NLeptons;
-//
-bool passTrig;
-float pTL1, etaL1;
-float pTL2, etaL2;
-float pTL3, etaL3;
-float pTL4, etaL4;
-float phiL1, deltaphiL13;
-float phiL2, deltaphiL14;
-float phiL3, deltaphiL23;
-float phiL4, deltaphiL24;
-float deltaphiZZ;
-int idL1, idL2, idL3, idL4;
-
-float mass4l, mass4lErr;
-float mass4lREFIT, mass4lErrREFIT;
-float massZ1REFIT, massZ2REFIT;
-float mass4mu, mass4e, mass2e2mu;
-float pT4l;
-float massZ1, massZ2;
+int TnP_l1_pdgId; //[nTnPfloat TnP_l1_pt; //[nTnP]
+float TnP_l1_pt; //[nTnP]
+float TnP_l1_eta; //[nTnP]
+float TnP_l1_phi; //[nTnP]
+float TnP_l1_mass; //[nTnP]
+int TnP_l1_tightId; //[nTnP]
+float TnP_l1_sip3d; //[nTnP]
+float TnP_l1_p4WithFSR_pt; //[nTnP]
+float TnP_l1_p4WithFSR_eta; //[nTnP]
+float TnP_l1_p4WithFSR_phi; //[nTnP]
+float TnP_l1_p4WithFSR_mass; //[nTnP] 
+int TnP_l1_looseId;
+float TnP_l1_relIsoAfterFSR;
+float TnP_l1_relIsobeforeFSR;
+float TnP_l1_chargedHadIso03;
+float met;
+float D_bkg_kin;
 int njets_pt30_eta4p7;
 int njets_pt30_eta2p5;
-float pTj1, etaj1;
-float pTj2, etaj2;
-float qgj1, qgj2;
-float pTj1_2p5, pTj2_2p5;
-
-float D_bkg_kin;
-float D_bkg;
-float Dgg10_VAMCFM;
-float D_g4;
-float D_g1g4;
-float D_VBF;
-float D_VBF1j;
-float D_HadWH;
-float D_HadZH;
-float D_VBF_QG;
-float D_VBF1j_QG;
-float D_HadWH_QG;
-float D_HadZH_QG;
-
+int nbjets_pt30_eta4p7;
 int EventCat;
-int nisoleptons, nbjets_pt30_eta4p7;
-float met;
-float signalMCWeight;
+bool passTrig;
 // input tree variables
 std::string *triggersPassed;
 ULong64_t Run, LumiSect, Event;
@@ -138,7 +109,9 @@ std::vector<float> *lep_dxy;
 std::vector<float> *lep_dz;
 int lep_Hindex[4];
 std::vector<float> *lep_RelIso;
+std::vector<float> *lep_isoCH;
 std::vector<float> *lep_RelIsoNoFSR;
+
 std::vector<float> *lep_pterr;
 std::vector<float> *lep_dataMC;
 
@@ -179,6 +152,7 @@ namespace ZZ4LAnalysisTree {
         tree->SetBranchStatus("lep_phi",1);
         tree->SetBranchStatus("lep_mass",1);
         tree->SetBranchStatus("lep_RelIso",1);
+        tree->SetBranchStatus("lep_isoCH",1);
         tree->SetBranchStatus("lep_RelIsoNoFSR",1);
         tree->SetBranchStatus("lepFSR_pt",1);
         tree->SetBranchStatus("lepFSR_eta",1);
@@ -220,6 +194,7 @@ namespace ZZ4LAnalysisTree {
         tree->SetBranchAddress("lep_eta",&lep_eta);
         tree->SetBranchAddress("lep_phi",&lep_phi);
         tree->SetBranchAddress("lep_mass",&lep_mass);
+        tree->SetBranchAddress("lep_isoCH",&lep_isoCH);
         tree->SetBranchAddress("lep_RelIso",&lep_RelIso);
         tree->SetBranchAddress("lep_RelIsoNoFSR",&lep_RelIsoNoFSR);
         tree->SetBranchAddress("lepFSR_pt",&lepFSR_pt);
