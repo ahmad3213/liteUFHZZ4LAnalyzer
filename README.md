@@ -1,12 +1,12 @@
 # liteUFHZZ4LAnalyzer
 
-cmsrel CMSSW_8_0_26_patch1
-cd CMSSW_8_0_26_patch1/src
-git clone https://github.com/ahmad3213/liteUFHZZ4LAnalyzer
-cd liteUFHZZ4LAnalyzer/
-git checkout Tag_and_probe
-// checking out recipe is finished
+cmsrel CMSSW_8_0_26_patch1 <br/>
+cd CMSSW_8_0_26_patch1/src <br/>
+git clone https://github.com/ahmad3213/liteUFHZZ4LAnalyzer <br/>
+cd liteUFHZZ4LAnalyzer/ <br/>
+git checkout Tag_and_probe <br/>
+// checking out recipe is finished <br/>
 
-main code in file ZZ4L_Ana.cc
-input tree variable/branches are decelared in file  include/AnalysisTree.h
+main code in file ZZ4L_Ana.cc <br/>
+input tree variable/branches are decelared in file  include/AnalysisTree.h <br/>
 
