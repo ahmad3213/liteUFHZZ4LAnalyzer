@@ -10,3 +10,5 @@ git checkout Tag_and_probe <br/>
 main code in file ZZ4L_Ana.cc <br/>
 input tree variable/branches are decelared in file  include/AnalysisTree.h <br/>
 
+// Every time when you change in the code, you have create compile and create executable fine again  by following command 
+make
